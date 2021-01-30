@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-let password = 'xpcx5dvz97CtfPaf';
+let password = 'dLT9ZzbsxXLpihFI';
 let databaseName = 'db';
 if (process.env.NODE_ENV === 'test') {
     databaseName = 'testdb';

@@ -1,4 +1,4 @@
-const usersController = require('./users.controller');
+const usersController = require('./user.controller');
 const jwt = require('jsonwebtoken');
 const {to} = require('../tools/to');
 
@@ -22,4 +22,19 @@ const loginUser = async (req, res) => {
     )
 }
 
+const registerUser = async (req, res) => {
+    if (!req.body) {
+        return res.status(400).json({message: 'Missing data'});
+    } else if (!req.body.user || !req.body.password) {
+        return res.status(400).json({message: 'Missing data'});
+    }
+
+    let [err, resp] = await to(usersController.registerUser(req.body.user, req.body.password));
+
+    res.status(200).json(
+        {message: 'Succesful register'}
+    )
+}
+
 exports.loginUser = loginUser;
+exports.registerUser = registerUser;
