@@ -25,11 +25,21 @@ const loginUser = async (req, res) => {
 const registerUser = async (req, res) => {
     if (!req.body) {
         return res.status(400).json({message: 'Missing data'});
-    } else if (!req.body.user || !req.body.password) {
+    } else if (!req.body.user || !req.body.password || !req.body.email) {
         return res.status(400).json({message: 'Missing data'});
     }
 
-    let [err, resp] = await to(usersController.registerUser(req.body.user, req.body.password));
+    let [errReg, respReg] = await to(usersController.registerUser(req.body.user, req.body.email, req.body.password));
+
+    if(errReg) {
+        return res.status(500).json({message: 'Server error'});
+    }
+
+    let [errEmail, respEmail] = await to(usersController.sendEmailToUser(req.body.email));
+
+    if(errEmail) {
+        return res.status(500).json({message: 'Server error'});
+    }
 
     res.status(200).json(
         {message: 'Succesful register'}
