@@ -35,7 +35,7 @@ const registerUser = async (req, res) => {
         return res.status(500).json({message: 'Server error'});
     }
 
-    let [errEmail, respEmail] = await to(usersController.sendEmailToUser(req.body.email));
+    let [errEmail, respEmail] = await to(usersController.sendEmailToUser(req.body.email, respReg));
 
     if(errEmail) {
         return res.status(500).json({message: 'Server error'});
@@ -46,5 +46,22 @@ const registerUser = async (req, res) => {
     )
 }
 
+const activeAcount = async (req, res) => {
+    if (!req.params) {
+        return res.status(400).json({message: 'Missing data'});
+    }
+
+    let [errActive, resActive] = await to(usersController.activeUserAcount(req.params.userId));
+
+    if(errActive) {
+        return res.status(500).json({message: 'Server error'});
+    }
+
+    res.status(200).json(
+        {message: 'Succesful activation'}
+    )
+}
+
 exports.loginUser = loginUser;
 exports.registerUser = registerUser;
+exports.activeAcount = activeAcount;

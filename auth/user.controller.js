@@ -33,7 +33,7 @@ const registerUser = (userName, email, password) => {
             confirmed: false
         });
         await newUser.save();
-        resolve();
+        resolve(userId);
     });
 }
 
@@ -74,7 +74,7 @@ const checkUserCredentials = (userName, password) => {
     });
 }
 
-const sendEmailToUser = (userEmail) => {
+const sendEmailToUser = (userEmail, userId) => {
     return new Promise(async (resolve, reject) => {
         var transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -88,7 +88,7 @@ const sendEmailToUser = (userEmail) => {
             from: 'pruebas.alex.programacion@gmail.com',
             to: userEmail,
             subject: 'Bienvenido a ...',
-            text: 'Se ha registrado correctamente, para activar su cuenta pulse el siguiente link:'
+            html:`<h3>Se ha registrado correctamente, para activar su cuenta pulse el siguiente link: </h3><p>http://localhost:3000/auth/register/activation/${userId}</p>`
         };
 
         transporter.sendMail(mailOptions, function (error, info) {
@@ -103,9 +103,19 @@ const sendEmailToUser = (userEmail) => {
     })
 }
 
+const activeUserAcount = (userId) => {
+    return new Promise(async (resolve, reject) => {
+        let [err, user] = await to(getUser(userId));
+        user.confirmed = true;
+        user.save();
+        resolve();
+    })
+}
+
 exports.registerUser = registerUser;
 exports.checkUserCredentials = checkUserCredentials;
 exports.getUserIdFromUserName = getUserIdFromUserName;
 exports.getUser = getUser;
 exports.cleanUpUsers = cleanUpUsers;
 exports.sendEmailToUser = sendEmailToUser;
+exports.activeUserAcount = activeUserAcount;

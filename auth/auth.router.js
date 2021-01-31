@@ -6,7 +6,10 @@ router.route('/login')
     .post(authHttpHandler.loginUser);
 
 router.route('/register')
-    .post(authHttpHandler.registerUser)
+    .post(authHttpHandler.registerUser);
+
+router.route('/register/activation/:userId')
+    .get(authHttpHandler.activeAcount);
 
 exports.router = router;
 
