@@ -15,7 +15,7 @@ const loginUser = async (req, res) => {
         return res.status(401).json({message: 'Invalid credentials'});
     }
     // Si son validas, generamos un JWT y lo devolvemos
-    let user = await usersController.getUserIdFromUserName(req.body.user);
+    let user = await usersController.getUserFromUserName(req.body.user);
     const token = jwt.sign({userId: user.userId}, 'secretPassword');
     res.status(200).json(
         {token: token}
@@ -62,6 +62,17 @@ const activeAcount = async (req, res) => {
     )
 }
 
+const getAllUsers = async (req, res) => {
+    let [errUsers, resUsers] = await to(usersController.getUsers());
+    if(errUsers){
+        return res.status(500).json({message: 'Server error'});
+    }
+    res.status(200).json(
+        {users: resUsers}
+    )
+}
+
 exports.loginUser = loginUser;
 exports.registerUser = registerUser;
 exports.activeAcount = activeAcount;
+exports.getAllUsers = getAllUsers;

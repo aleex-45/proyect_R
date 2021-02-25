@@ -7,7 +7,6 @@ const UserModel = new Schema(
         userName: String,
         email: String,
         password: String,
-        userId: String,
         confirmed: Boolean
     });
 

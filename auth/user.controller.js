@@ -18,22 +18,22 @@ const registerUser = (userName, email, password) => {
     return new Promise(async (resolve, reject) => {
         let hashedPwd = crypto.hashPasswordSync(password);
         // Guardar en la base de datos nuestro usuario
-        let userId = uuid.v4();
         let newUser = new UserModel({
-            userId: userId,
             userName: userName,
             email: email,
             password: hashedPwd,
             confirmed: false
         });
         await newUser.save();
-        resolve(userId);
+        let userId = await getUserFromUserName(newUser.userName);
+        console.log(userId)
+        resolve(userId._id);
     });
 }
 
 const getUser = (userId) => {
     return new Promise(async (resolve, reject) => {
-        let [err, result] = await to(UserModel.findOne({ userId: userId }).exec());
+        let [err, result] = await to(UserModel.findOne({ _id: userId }).exec());
         if (err) {
             return reject(err);
         }
@@ -41,7 +41,17 @@ const getUser = (userId) => {
     });
 }
 
-const getUserIdFromUserName = (userName) => {
+const getUsers = () => {
+    return new Promise(async (resolve, reject) => {
+        let [err, result] = await to(UserModel.find({}).exec());
+        if (err) {
+            return reject(err);
+        }
+        resolve(result);
+    });
+}
+
+const getUserFromUserName = (userName) => {
     return new Promise(async (resolve, reject) => {
         let [err, result] = await to(UserModel.findOne({ userName: userName }).exec());
         if (err) {
@@ -53,7 +63,7 @@ const getUserIdFromUserName = (userName) => {
 
 const checkUserCredentials = (userName, password) => {
     return new Promise(async (resolve, reject) => {
-        let [err, user] = await to(getUserIdFromUserName(userName));
+        let [err, user] = await to(getUserFromUserName(userName));
         if (!err || user) {
             crypto.comparePassword(password, user.password, (err, result) => {
                 if (err) {
@@ -108,8 +118,9 @@ const activeUserAcount = (userId) => {
 
 exports.registerUser = registerUser;
 exports.checkUserCredentials = checkUserCredentials;
-exports.getUserIdFromUserName = getUserIdFromUserName;
+exports.getUserFromUserName = getUserFromUserName;
 exports.getUser = getUser;
 exports.cleanUpUsers = cleanUpUsers;
 exports.sendEmailToUser = sendEmailToUser;
 exports.activeUserAcount = activeUserAcount;
+exports.getUsers = getUsers;
