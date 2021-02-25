@@ -3,15 +3,9 @@ const crypto = require('../tools/crypto.js');
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
 const { to } = require('../tools/to');
+const userModel = require('./user.model');
 
-const UserModel = mongoose.model('UserModel',
-    {
-        userName: String,
-        email: String,
-        password: String,
-        userId: String,
-        confirmed: Boolean
-    });
+const UserModel = mongoose.model('UserModel', userModel.UserModel);
 
 const cleanUpUsers = () => {
     return new Promise(async (resolve, reject) => {
